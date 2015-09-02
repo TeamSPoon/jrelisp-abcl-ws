@@ -28,119 +28,121 @@ import org.armedbear.lisp.Symbol;
 import static org.armedbear.lisp.Lisp.*;
 
 public final class BufferStream extends Stream {
-	private final Buffer buffer;
+    private final Buffer buffer;
 
-	public BufferStream(Buffer buf) {
-		buffer = buf;
-		elementType = Symbol.CHARACTER;
-		isCharacterStream = true;
-		isOutputStream = true;
+    public BufferStream(Buffer buf) {
+
+	super(null);
+	buffer = buf;
+	elementType = Symbol.CHARACTER;
+	isCharacterStream = true;
+	isOutputStream = true;
+    }
+
+    public Buffer getBuffer() {
+	return buffer;
+    }
+
+    public LispObject typeOf() {
+	return LispAPI.BUFFER_STREAM;
+    }
+
+    // // FIXME
+    // public LispClass classOf()
+    // {
+    // return BuiltInClass.STREAM;
+    // }
+
+    // FIXME
+    public LispObject typep(LispObject typeSpecifier) {
+	if (typeSpecifier == LispAPI.BUFFER_STREAM)
+	    return T;
+	return super.typep(typeSpecifier);
+    }
+
+    public void _writeChar(char c) {
+	try {
+	    buffer.lockWrite();
+	} catch (InterruptedException e) {
+	    Log.error(e);
+	    return;
 	}
-
-	public Buffer getBuffer() {
-		return buffer;
+	try {
+	    switch (c) {
+	    case '\r':
+		break;
+	    case '\n': {
+		buffer.appendLine("");
+		buffer.modified();
+		buffer.needsRenumbering(true);
+		break;
+	    }
+	    default: {
+		Line line = buffer.getLastLine();
+		int offset = line.length();
+		FastStringBuffer sb = new FastStringBuffer(line.getText());
+		sb.append(c);
+		line.setText(sb.toString());
+		buffer.modified();
+	    }
+	    }
+	} finally {
+	    buffer.unlockWrite();
 	}
+    }
 
-	public LispObject typeOf() {
-		return LispAPI.BUFFER_STREAM;
+    public void _writeChars(char[] chars, int start, int end)
+
+    {
+	_writeString(new String(chars, start, end - start));
+    }
+
+    public void _writeString(String s) {
+	try {
+	    buffer.lockWrite();
+	} catch (InterruptedException e) {
+	    Log.error(e);
+	    return;
 	}
-
-	// // FIXME
-	// public LispClass classOf()
-	// {
-	// return BuiltInClass.STREAM;
-	// }
-
-	// FIXME
-	public LispObject typep(LispObject typeSpecifier) {
-		if (typeSpecifier == LispAPI.BUFFER_STREAM)
-			return T;
-		return super.typep(typeSpecifier);
+	try {
+	    buffer.insertString(buffer.getEnd(), s);
+	    buffer.modified();
+	    if (s.indexOf('\n') >= 0)
+		buffer.needsRenumbering(true);
+	} finally {
+	    buffer.unlockWrite();
 	}
+    }
 
-	public void _writeChar(char c) {
-		try {
-			buffer.lockWrite();
-		} catch (InterruptedException e) {
-			Log.error(e);
-			return;
-		}
-		try {
-			switch (c) {
-			case '\r':
-				break;
-			case '\n': {
-				buffer.appendLine("");
-				buffer.modified();
-				buffer.needsRenumbering(true);
-				break;
-			}
-			default: {
-				Line line = buffer.getLastLine();
-				int offset = line.length();
-				FastStringBuffer sb = new FastStringBuffer(line.getText());
-				sb.append(c);
-				line.setText(sb.toString());
-				buffer.modified();
-			}
-			}
-		} finally {
-			buffer.unlockWrite();
-		}
+    public void _writeLine(String s) {
+	try {
+	    buffer.lockWrite();
+	} catch (InterruptedException e) {
+	    Log.error(e);
+	    return;
 	}
-
-	public void _writeChars(char[] chars, int start, int end)
-
-	{
-		_writeString(new String(chars, start, end - start));
+	try {
+	    buffer.append(s);
+	    buffer.appendLine("");
+	    buffer.modified();
+	    buffer.needsRenumbering(true);
+	} finally {
+	    buffer.unlockWrite();
 	}
+    }
 
-	public void _writeString(String s) {
-		try {
-			buffer.lockWrite();
-		} catch (InterruptedException e) {
-			Log.error(e);
-			return;
-		}
-		try {
-			buffer.insertString(buffer.getEnd(), s);
-			buffer.modified();
-			if (s.indexOf('\n') >= 0)
-				buffer.needsRenumbering(true);
-		} finally {
-			buffer.unlockWrite();
-		}
-	}
+    public void _finishOutput() {
+	if (buffer.needsRenumbering())
+	    buffer.renumber();
+	buffer.repaint();
+    }
 
-	public void _writeLine(String s) {
-		try {
-			buffer.lockWrite();
-		} catch (InterruptedException e) {
-			Log.error(e);
-			return;
-		}
-		try {
-			buffer.append(s);
-			buffer.appendLine("");
-			buffer.modified();
-			buffer.needsRenumbering(true);
-		} finally {
-			buffer.unlockWrite();
-		}
-	}
+    public void _close() {
+	_finishOutput();
+	setOpen(false);
+    }
 
-	public void _finishOutput() {
-		if (buffer.needsRenumbering())
-			buffer.renumber();
-		buffer.repaint();
-	}
-
-	public void _close() {
-		_finishOutput();
-		setOpen(false);
-	}
-
-	public String toString() {
-		return unreadableString("BUFFER-STREAM");
-	}
+    public String toString() {
+	return unreadableString("BUFFER-STREAM");
+    }
 }

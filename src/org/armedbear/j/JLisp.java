@@ -134,7 +134,7 @@ public final class JLisp extends LispShell {
 			public void run() {
 				Log.debug("JLisp.dispose");
 				if (interpreter != null)
-					interpreter.kill();
+					interpreter.kill(1);
 				if (socket != null) {
 					try {
 						Log.debug("closing socket");

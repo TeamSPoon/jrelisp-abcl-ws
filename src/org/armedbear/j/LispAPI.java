@@ -24,11 +24,14 @@ package org.armedbear.j;
 import gnu.regexp.REException;
 import javax.swing.SwingUtilities;
 import javax.swing.undo.CompoundEdit;
+
+import org.armedbear.j.mail.GenericMailboxFilter;
 import org.armedbear.lisp.AbstractString;
 import org.armedbear.lisp.ConditionThrowable;
 import org.armedbear.lisp.Fixnum;
+import org.armedbear.lisp.FuncallableStandardObject;
 import org.armedbear.lisp.Function;
-import org.armedbear.lisp.GenericFunction;
+//import org.armedbear.lisp.GenericFunction;
 import org.armedbear.lisp.JavaObject;
 import org.armedbear.lisp.Lisp;
 import org.armedbear.lisp.LispCharacter;
@@ -41,6 +44,7 @@ import org.armedbear.lisp.Pathname;
 import org.armedbear.lisp.Primitive;
 import org.armedbear.lisp.Primitives;
 import org.armedbear.lisp.SimpleString;
+import org.armedbear.lisp.StandardObject;
 import org.armedbear.lisp.Symbol;
 import org.armedbear.lisp.TypeError;
 import org.armedbear.lisp.UndefinedFunction;
@@ -1199,7 +1203,7 @@ public final class LispAPI extends Lisp {
 				fun = arg.getSymbolFunction();
 			else
 				fun = arg;
-			if (fun instanceof Function || fun instanceof GenericFunction) {
+			if (fun instanceof Function || fun instanceof FuncallableStandardObject) {
 				Runnable r = new Runnable() {
 					public void run() {
 						try {
@@ -1376,7 +1380,7 @@ public final class LispAPI extends Lisp {
 	// ### find-file-buffer pathname => buffer
 	private static final Primitive FIND_FILE_BUFFER = new Primitive("find-file-buffer", PACKAGE_J, true, "pathname") {
 		public LispObject execute(LispObject arg) {
-			final Pathname pathname = Pathname.coerceToPathname(arg);
+			final Pathname pathname = Lisp.coerceToPathname(arg);
 			final String namestring = pathname.getNamestring();
 			if (namestring != null) {
 				final Editor editor = Editor.currentEditor();

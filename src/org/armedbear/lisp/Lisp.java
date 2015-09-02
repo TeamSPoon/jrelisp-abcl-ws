@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.armedbear.lisp.io.InputStreamFacade;
 
-public final class Lisp
+public class Lisp
 {
   public static final boolean debug = true;
 

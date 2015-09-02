@@ -102,6 +102,17 @@ public class Packages
 	public static final synchronized Package findPackage(String name) {
 		return getCurrentPackage().findPackage(name);
 	}
+	
+	
+	public static Package findOrCreate(String name) 
+	{
+		if (map.containsKey(name)) {
+			return map.get(name);
+		}
+		Package pkg = new Package(name);
+		map.put(name, pkg);
+		return pkg;
+	}
 		
 	// Finds package named `name'.	Returns null if package doesn't exist.
 	// Called by Package.findPackage after checking package-local package

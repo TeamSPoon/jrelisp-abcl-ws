@@ -45,39 +45,39 @@ public final class Site {
     private static LispObject LISP_HOME;
 
     private static void init() {
-        String s = System.getProperty("abcl.home");
-        if (s != null) {
-            String fileSeparator = System.getProperty("file.separator");
-            if (!s.endsWith(fileSeparator)) {
-                s += fileSeparator;
-            }
-            LISP_HOME = new Pathname(s);
-            return;
-        }
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		Class lispClass = Lisp.class;
-		String path = lispClass.getResource("/org/armedbear/lisp/").getPath();
-		URL url = lispClass.getResource("boot.lisp");
-		if (url == null) {
+	String s = System.getProperty("abcl.home");
+	if (s != null) {
+	    String fileSeparator = System.getProperty("file.separator");
+	    if (!s.endsWith(fileSeparator)) {
+		s += fileSeparator;
+	    }
+	    LISP_HOME = new Pathname(s);
+	    return;
+	}
+	ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	Class lispClass = Lisp.class;
+	String path = lispClass.getResource("/org/armedbear/lisp/").getPath();
+	URL url = lispClass.getResource("boot.lisp");
+	if (url == null) {
 
-			classLoader = lispClass.getClassLoader();
-			url = classLoader.getResource("/org/armedbear/lisp/boot.lisp");
-		}
-		if (url == null) {
-			url = ClassLoader.getSystemResource("/org/armedbear/lisp/boot.lisp");
-		}
-		if (url == null) {
+	    classLoader = lispClass.getClassLoader();
+	    url = classLoader.getResource("/org/armedbear/lisp/boot.lisp");
+	}
+	if (url == null) {
+	    url = ClassLoader.getSystemResource("/org/armedbear/lisp/boot.lisp");
+	}
+	if (url == null) {
 
-			File f = new File(path,"boot.lisp");
-			try {
-				url = f.toURL();
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	    File f = new File(path, "boot.lisp");
+	    try {
+		url = f.toURL();
+	    } catch (MalformedURLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 
-		}
-        if (url != null) {
+	}
+	if (url != null) {
             if (!Pathname.isSupportedProtocol(url.getProtocol())) {
 				Debug.trace("unSupportedProtocol: " + url);
                 LISP_HOME = NIL;
@@ -93,19 +93,19 @@ public final class Site {
         Debug.trace("Unable to determine LISP_HOME.");
     }
 
-	public static final LispObject getLispHome() {
-      if (LISP_HOME == null) {
-        init();
-      }
-      return LISP_HOME;
+    public static final LispObject getLispHome() {
+	if (LISP_HOME == null) {
+	    init();
+	}
+	return LISP_HOME;
     }
 
     // ### *lisp-home*
-	private static final Symbol _LISP_HOME_ = exportSpecial("*LISP-HOME*", PACKAGE_EXT, NIL);
+    private static final Symbol _LISP_HOME_ = exportSpecial("*LISP-HOME*", PACKAGE_EXT, NIL);
 
     static {
-		LispObject p = getLispHome();
-        if (p != null)
-            _LISP_HOME_.setSymbolValue(p);
+	LispObject p = getLispHome();
+	if (p != null)
+	    _LISP_HOME_.setSymbolValue(p);
     }
 }

@@ -105,7 +105,7 @@ public final class LispThread extends LispObject
                     if (isInterrupted()) {
                         processThreadInterrupts();
                     }
-                    String msg 
+                    String msg
                         = MessageFormat.format("Ignoring uncaught exception {0}.",
                                                t.toString());
                     Debug.warn(msg);
@@ -315,7 +315,7 @@ public final class LispThread extends LispObject
         return NIL;
     }
 
-   /** 
+   /**
     * Force a single value, for situations where multiple values should be
     * ignored.
     */
@@ -641,14 +641,14 @@ public final class LispThread extends LispObject
     private Object[] stack = topStackSegment.stack;
     private int stackPtr = 0;
     private StackSegment spareStackSegment;
-    
-    private static class StackSegment 
+
+    private static class StackSegment
       implements org.armedbear.lisp.protocol.Inspectable
     {
         final Object[] stack;
         final StackSegment next;
         int stackPtr;
-        
+
         StackSegment(int size, StackSegment next) {
             stack = new Object[size];
             this.next = next;
@@ -662,7 +662,7 @@ public final class LispThread extends LispObject
             .push(LispInteger.getInstance(LispThread.SEGMENT_SIZE)).nreverse();
         }
     }
-    
+
     private void ensureStackCapacity(int itemsToPush) {
         if (stackPtr + (itemsToPush - 1) >= stack.length)
             grow(itemsToPush);
@@ -731,7 +731,7 @@ public final class LispThread extends LispObject
         }
         return (StackFrame) stack[stackPtr - 1];
     }
-    
+
     public final void pushStackFrame(JavaStackFrame frame) {
         frame.setNext(getStackTop());
         ensureStackCapacity(1);
@@ -763,7 +763,7 @@ public final class LispThread extends LispObject
             popStackSegment();
         }
     }
-    
+
     private void popStackSegment() {
         topStackSegment.stackPtr = 0;
         if (topStackSegment.next != null) {
@@ -1218,30 +1218,30 @@ public final class LispThread extends LispObject
         public LispObject execute(LispObject arg)
         {
             // join the thread, and returns it's value.  The second return
-            // value is T if the thread finishes normally, NIL if its 
-            // interrupted. 
-            if (arg instanceof LispThread) {                
+            // value is T if the thread finishes normally, NIL if its
+            // interrupted.
+            if (arg instanceof LispThread) {
                 final LispThread joinedThread = (LispThread) arg;
                 final LispThread waitingThread = currentThread();
                 try {
                     joinedThread.javaThread.join();
-                    return 
+                    return
                         waitingThread.setValues(joinedThread.threadValue, T);
                 } catch (InterruptedException e) {
                     waitingThread.processThreadInterrupts();
-                    return 
+                    return
                         waitingThread.setValues(joinedThread.threadValue, NIL);
                 }
             } else {
                 return type_error(arg, Symbol.THREAD);
-            } 
+            }
         }
     };
-    
+
     final static DoubleFloat THOUSAND = new DoubleFloat(1000);
 
     static final long sleepMillisPart(LispObject seconds) {
-      double d 
+      double d
         = checkDoubleFloat(seconds.multiplyBy(THOUSAND)).getValue();
       if (d < 0) {
         type_error(seconds, list(Symbol.REAL, Fixnum.ZERO));
@@ -1254,7 +1254,7 @@ public final class LispThread extends LispObject
         = checkDoubleFloat(seconds.multiplyBy(THOUSAND)).getValue();
       double n = d * 1000000; // sleep interval in nanoseconds
       d = 1.0e6 * ((long)d); //  sleep interval to millisecond precision
-      n = n - d; 
+      n = n - d;
 
       return (n < Integer.MAX_VALUE ? (int) n : Integer.MAX_VALUE);
     }
@@ -1277,15 +1277,15 @@ public final class LispThread extends LispObject
           boolean zeroArgP = arg.ZEROP() != NIL;
 
           try {
-            if (millis == 0 && nanos == 0) { 
+            if (millis == 0 && nanos == 0) {
               if (zeroArgP) {
                 Thread.sleep(0, 0);
-              } else { 
+              } else {
                 Thread.sleep(0, 1);
               }
             } else {
               Thread.sleep(millis, nanos);
-            } 
+            }
           } catch (InterruptedException e) {
             currentThread().processThreadInterrupts();
           }
@@ -1365,7 +1365,7 @@ public final class LispThread extends LispObject
         }
     };
 
-    public static final Primitive CURRENT_THREAD 
+    public static final Primitive CURRENT_THREAD
       = new pf_current_thread();
     @DocString(name="current-thread",
                doc="Returns a reference to invoking thread.")
@@ -1398,7 +1398,7 @@ public final class LispThread extends LispObject
 
     public static final Primitive FRAME_TO_STRING
       = new pf_frame_to_string();
-    @DocString(name="frame-to-string", 
+    @DocString(name="frame-to-string",
                args="frame",
                doc="Convert stack FRAME to a (potentially) readable string.")
     private static final class pf_frame_to_string extends Primitive {
@@ -1430,7 +1430,7 @@ public final class LispThread extends LispObject
     };
 
 
-    public static final SpecialOperator SYNCHRONIZED_ON 
+    public static final SpecialOperator SYNCHRONIZED_ON
       = new so_synchronized_on();
     @DocString(name="synchronized-on", args="form &body body")
     private static final class so_synchronized_on extends SpecialOperator {
@@ -1441,7 +1441,7 @@ public final class LispThread extends LispObject
       public LispObject execute(LispObject args, Environment env) {
         if (args == NIL)
           return error(new WrongNumberOfArgumentsException(this, 1));
-        
+
         LispThread thread = LispThread.currentThread();
         synchronized (eval(args.car(), env, thread).lockableInstance()) {
           return progn(args.cdr(), env, thread);
@@ -1449,11 +1449,11 @@ public final class LispThread extends LispObject
       }
     };
 
-  
+
     public static final Primitive OBJECT_WAIT
       = new pf_object_wait();
     @DocString(
-    name="object-wait", args="object &optional timeout", 
+    name="object-wait", args="object &optional timeout",
     doc="Causes the current thread to block until object-notify or object-notify-all is called on OBJECT.\n"
        + "Optionally unblock execution after TIMEOUT seconds.  A TIMEOUT of zero\n"
        + "means to wait indefinitely.\n"
@@ -1483,9 +1483,9 @@ public final class LispThread extends LispObject
         long millis = sleepMillisPart(timeout);
         int nanos = sleepNanosPart(timeout);
         boolean zeroArgP = timeout.ZEROP() != NIL;
-          
+
         try {
-          if (millis == 0 && nanos == 0) { 
+          if (millis == 0 && nanos == 0) {
             if (zeroArgP) {
               object.lockableInstance().wait(0, 0);
             } else {
@@ -1505,7 +1505,7 @@ public final class LispThread extends LispObject
 
     public static final Primitive OBJECT_NOTIFY
       = new pf_object_notify();
-    @DocString(name="object-notify", 
+    @DocString(name="object-notify",
                args="object",
                doc="Wakes up a single thread that is waiting on OBJECT's monitor."
 + "\nIf any threads are waiting on this object, one of them is chosen to be"
@@ -1529,7 +1529,7 @@ public final class LispThread extends LispObject
 
     public static final Primitive OBJECT_NOTIFY_ALL
       = new pf_object_notify_all();
-    @DocString(name="object-notify-all", 
+    @DocString(name="object-notify-all",
                args="object",
                doc="Wakes up all threads that are waiting on this OBJECT's monitor."
 + "\nA thread waits on an object's monitor by calling one of the wait methods.")
@@ -1546,5 +1546,9 @@ public final class LispThread extends LispObject
         }
         return NIL;
       }
-    };
+    }
+
+    public static void remove(Thread currentThread) {
+       map.remove(currentThread);
+    }
 }

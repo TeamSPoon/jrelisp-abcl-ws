@@ -72,11 +72,11 @@ public class LispObject //extends Lisp
     return new SimpleString(sb);
   }
 
-  /** 
+  /**
    *  Implementing the getParts() protocol will allow INSPECT to
    *  return information about the substructure of a descendent of
    *  LispObject.
-   *  
+   *
    *  The protocol is to return a List of Cons pairs, where the car of
    *  each pair contains a decriptive string, and the cdr returns a
    *  subobject for inspection.
@@ -138,7 +138,7 @@ public class LispObject //extends Lisp
   /** This method returns 'this' by default, but allows
    * objects to return different values to increase Java
    * interoperability
-   * 
+   *
    * @return An object to be used with synchronized, wait, notify, etc
    */
   public Object lockableInstance()
@@ -201,7 +201,7 @@ public class LispObject //extends Lisp
     LispObject tail = cdr();
     if (!(tail instanceof Nil)) {
         return tail.car();
-    } else 
+    } else
         return NIL;
   }
 
@@ -210,7 +210,7 @@ public class LispObject //extends Lisp
     LispObject tail = cdr();
     if (!(tail instanceof Nil)) {
         return tail.cdr();
-    } else 
+    } else
         return NIL;
   }
 
@@ -219,7 +219,7 @@ public class LispObject //extends Lisp
     LispObject tail = cddr();
     if (!(tail instanceof Nil)) {
         return tail.car();
-    } else 
+    } else
         return NIL;
   }
 
@@ -536,7 +536,7 @@ public class LispObject //extends Lisp
 
   public void aset(int index, int n)
 
-  {    
+  {
           aset(index, Fixnum.getInstance(n));
   }
 
@@ -735,7 +735,7 @@ public class LispObject //extends Lisp
   }
 
   /** PRINC-TO-STRING function to be used with Java objects
-   * 
+   *
    * @return A string in human-readable format, as per PRINC definition
    */
   public String princToString()
@@ -759,9 +759,9 @@ public class LispObject //extends Lisp
 
   /** Calls unreadableString(String s, boolean identity) with a default
    * identity value of 'true'.
-   * 
+   *
    * This function is a helper for printObject()
-   * 
+   *
    * @param s String representation of this object.
    * @return String enclosed in the non-readable #< ... > markers
    */
@@ -771,12 +771,12 @@ public class LispObject //extends Lisp
 
   /** Creates a non-readably (as per CLHS terminology) representation
    * of the 'this' object, using string 's'.
-   * 
+   *
    * If the current value of the variable *PRINT-READABLY* is T, a
    * Lisp error is thrown and no value is returned.
-   * 
+   *
    * This function is a helper for printObject()
-   * 
+   *
    * @param s
    * @param identity when 'true', includes Java's identityHash for the object
    *            in the output.
@@ -1321,37 +1321,37 @@ public class LispObject //extends Lisp
   public void incrementHotCount()
   {
   }
-  
+
   public LispObject evalImpl(
 		  final Environment env,
           final LispThread thread) {
 	return this;
   }
-  
+
   public boolean isSymbol() {
 	  return false;
   }
-  
+
   public boolean isCons() {
 	  return false;
   }
-  
+
   public boolean isASpecialOperator() {
   	return false;
   }
-  
+
   public boolean isAbstractArray() {
 	  return false;
   }
-  
+
   public boolean isSimpleArray_T() {
 	  return false;
   }
-  
+
   public boolean isFixnum() {
 	  return false;
   }
-  
+
   public boolean isAbstractVector() {
 	  return false;
   }
@@ -1359,113 +1359,120 @@ public class LispObject //extends Lisp
   public boolean isAbstractBitVector() {
 	  return false;
   }
-  
+
   public boolean isSimpleBitVector() {
 	  return false;
   }
-  
+
   public boolean isAbstractString() {
 	  return false;
   }
-  
+
   public boolean isOperator() {
   	return false;
   }
-  
+
   public boolean isAutoload() {
   	return false;
   }
-  
+
   public boolean isArithmeticError() {
   	return false;
   }
-  
+
   public boolean isAutoloadGeneralizedReference() {
 	  return false;
   }
-  
+
   public boolean isLispClass() {
 	  return false;
   }
-  
+
   public boolean isBignum() {
 	  return false;
   }
-  
+
   public boolean isRatio() {
 	  return false;
   }
-  
+
   public boolean isSingleFloat() {
 	  return false;
   }
-  
+
   public boolean isDoubleFloat() {
 	  return false;
   }
-  
+
   public boolean isComplex() {
 	  return false;
   }
-  
+
   public boolean isStream() {
 	  return false;
   }
-  
+
   public boolean isBroadcastStream() {
 	  return false;
   }
-  
+
   public boolean isByteArrayOutputStream() {
 	  return false;
   }
-  
+
   public boolean isStandardObject() {
 	  return false;
   }
-  
+
   public boolean isPathname() {
 	  return false;
   }
-  
+
   public boolean isJavaObject() {
 	  return false;
   }
-  
+
   public boolean isClosure() {
 	  return false;
   }
-  
+
   public boolean isLispCharacter() {
 	  return false;
   }
-  
+
   public boolean isMacroObject() {
 	  return false;
   }
   public boolean isNilVector() {
 	  return false;
   }
-  
+
   public boolean isConcatenatedStream() {
   	return false;
   }
   public boolean isLogicalPathname() {
 	  return false;
   }
-  
+
   public boolean isFunction() {
 	  return false;
   }
-  
+
   public boolean isRandomStateObject() {
   	return false;
   }
 
-	public String toString() {
-		LispObject lo = printObject();
-		if (lo != null)
-			return lo.getStringValue();
-		return super.toString();
-	}
+    public String toString() {
+	LispObject lo = printObject();
+	if (lo != null)
+	    return lo.getStringValue();
+	return super.toString();
+    }
+
+    public String writeToString() {
+	LispObject lo = printObject();
+	if (lo != null)
+	    return lo.getStringValue();
+	return super.toString();
+    }
 }

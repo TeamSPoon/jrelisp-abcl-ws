@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import org.armedbear.lisp.Site;
+import org.armedbear.lisp.LispObject;
 import org.armedbear.lisp.LispThread;
 
 public class LispShell extends Shell {
@@ -87,7 +88,7 @@ public class LispShell extends Shell {
 			if (shellCommand.indexOf("abcl") >= 0 || shellCommand.indexOf("org.armedbear.lisp") >= 0) {
 				shellCommand = shellCommand.concat(" --load-system-file swank-loader.lisp");
 			} else {
-				File lispHome = File.getInstance(Site.getLispHome());
+				File lispHome = File.getInstance(Site.getLispHome().getStringValue());
 				if (lispHome == null)
 					return null; // FIXME Error message?
 				File swankLoader = File.getInstance(lispHome, "swank-loader.lisp");
@@ -710,7 +711,7 @@ public class LispShell extends Shell {
 						sb.append(" -server");
 					sb.append(" -Xmx256M");
 					if (Platform.isPlatformUnix()) {
-						String lispHome = org.armedbear.lisp.Site.getLispHome();
+						LispObject lispHome = org.armedbear.lisp.Site.getLispHome();
 						if (lispHome != null) {
 							sb.append(" -Xrs -Djava.library.path=");
 							sb.append(lispHome);
