@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="org/armedbear/j/jdb/|org/armedbear/piso/|org/armedbear/lisp/java/awt/REPLConsole.java|org/armedbear/jrelisp/" kind="src" path="src"/>
+	<classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
+	<classpathentry kind="con" path="c:/Program Files/Java/jdk1.6.0_14/jre/lib/rt.jar"/>
+	<classpathentry kind="lib" path="lisp_classes"/>
+	<classpathentry kind="output" path="java_classes"/>
+</classpath>
